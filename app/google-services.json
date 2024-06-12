@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "524607194275",
+    "project_id": "moldelfitdatabase",
+    "storage_bucket": "moldelfitdatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524607194275:android:53f169c0aa18ddf56dab16",
+        "android_client_info": {
+          "package_name": "com.empatica.sample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN5j2680taXnb42htfzu-f5jOdaJ11jgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
+
+    <!-- este archivo sirve para poder permitir que una IP en concreto tenga permitido anviar texto en claro al dispositivo -->

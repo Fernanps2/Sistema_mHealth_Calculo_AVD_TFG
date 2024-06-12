@@ -1,0 +1,82 @@
+//AndroidManifest
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+//Código
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final int REQUEST_READ_PHONE_STATE = 1;
+    private TelephonyManager telephonyManager;
+    private PhoneStateListener phoneStateListener;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        // Verificar permisos y solicitar si es necesario
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+        } else {
+            startListening();
+        }
+    }
+
+    private void startListening() {
+        phoneStateListener = new PhoneStateListener() {
+            @Override
+            public void onCallStateChanged(int state, String phoneNumber) {
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        // El teléfono está en reposo
+                        Toast.makeText(MainActivity.this, "Teléfono en reposo", Toast.LENGTH_SHORT).show();
+                        break;
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        // El teléfono está sonando
+                        Toast.makeText(MainActivity.this, "Teléfono sonando: " + phoneNumber, Toast.LENGTH_SHORT).show();
+                        break;
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                        // El teléfono está en una llamada
+                        Toast.makeText(MainActivity.this, "Teléfono en llamada", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        };
+
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_READ_PHONE_STATE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startListening();
+            } else {
+                Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Detener la escucha cuando la actividad se destruya para evitar fugas de memoria
+        if (telephonyManager != null && phoneStateListener != null) {
+            telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+        }
+    }
+}
