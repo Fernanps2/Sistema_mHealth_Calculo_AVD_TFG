@@ -29,7 +29,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class InitialPage extends AppCompatActivity {
 
-    private Button buttonInitial;
+    private Button buttonUsuario;
+    private Button buttonCuidador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +43,24 @@ public class InitialPage extends AppCompatActivity {
             return insets;
         });
 
-        buttonInitial = (Button) findViewById(R.id.buttonInitial);
+        buttonUsuario = (Button) findViewById(R.id.buttonUsuario);
 
-        //Navegación a la página principal
-        buttonInitial.setOnClickListener(new View.OnClickListener() {
+        //Navegación a la página principal del usuario
+        buttonUsuario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(InitialPage.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        buttonCuidador = (Button) findViewById(R.id.buttonCuidador);
+
+        //Navegación a la página principal del cuidador
+        buttonCuidador.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(InitialPage.this, ActivityViewerCuidador.class);
                 startActivity(intent);
             }
         });

@@ -28,7 +28,16 @@
                 android:layout_marginTop="28dp"
                 android:layout_marginBottom="28dp"
                 android:textSize="20dp"
-                android:text="CALCULAR ACTIVIDADES" />
+                android:text="CALCULAR ACTIVIDADES DE" />
+
+            <TextView
+                android:id="@+id/idUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="28dp"
+                android:textSize="20dp"
+                android:text="CARGANDO..." />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -155,6 +164,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu_cuidador" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

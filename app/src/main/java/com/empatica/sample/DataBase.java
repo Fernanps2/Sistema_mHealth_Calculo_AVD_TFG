@@ -38,7 +38,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class DataBase extends ViewModel {
+public class DataBase {
     private static final String TAG = "DATABASE";
     private static final String USUARIOS = "Usuarios";
     private static final String CUIDADORES = "Cuidadores";
@@ -48,9 +48,6 @@ public class DataBase extends ViewModel {
     private static final String HR = "HR";
     private static final String TMP = "TMP";
     private static final String FECHA = "fecha";
-
-    private Calendar calendario;
-
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     //#######################################################################################
@@ -693,4 +690,181 @@ public class DataBase extends ViewModel {
     //#######################################################################################
     //#                                 DATOS PERSONALES                                    #
     //#######################################################################################
+
+    public LiveData<Map<String, Object>> getDataUser (String usuario) {
+        MutableLiveData<Map<String, Object>> liveData = new MutableLiveData<>();
+
+        try {
+            db.collection(USUARIOS)
+                    .document(usuario)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    liveData.setValue(document.getData());
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return liveData;
+    }
+
+    public LiveData<Map<String, Object>> getDataCuidador (String usuario) {
+        MutableLiveData<Map<String, Object>> liveData = new MutableLiveData<>();
+
+        try {
+            db.collection(CUIDADORES)
+                    .document(usuario)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    liveData.setValue(document.getData());
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return liveData;
+    }
+
+    public LiveData<Boolean> setDataUser (String usuario, Map<String, Object> data) {
+        MutableLiveData<Boolean> completado = new MutableLiveData<>();
+
+        try {
+            db.collection(USUARIOS)
+                    .document(usuario)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            completado.setValue(true);
+                            Log.d(TAG, "El documento se ha subido");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            completado.setValue(false);
+                            Log.d(TAG, "El documento no se ha subido");
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return completado;
+    }
+
+    public LiveData<Boolean> setDataCuidador (String usuario, Map<String, Object> data) {
+        MutableLiveData<Boolean> completado = new MutableLiveData<>();
+        try {
+            db.collection(CUIDADORES)
+                    .document(usuario)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            completado.setValue(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            completado.setValue(false);
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return completado;
+    }
+
+    public LiveData<Boolean> existeUsuario (String usuario) {
+        MutableLiveData<Boolean> existe = new MutableLiveData<>();
+
+        try {
+
+
+            db.collection(USUARIOS)
+                    .document(usuario).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // El documento existe
+                                    Log.d(TAG, "Documento existe!");
+                                    existe.setValue(true);
+                                } else {
+                                    // El documento no existe
+                                    Log.d(TAG, "Documento no existe.");
+                                    existe.setValue(false);
+                                }
+                            } else {
+                                Log.d(TAG, "Error al obtener documento:", task.getException());
+                            }
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return existe;
+    }
+
+    public LiveData<Boolean> existeUsuarioCuidador (String usuario) {
+        MutableLiveData<Boolean> existe = new MutableLiveData<>();
+
+        try {
+
+
+            db.collection(CUIDADORES)
+                    .document(usuario).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // El documento existe
+                                    Log.d(TAG, "Documento existe!");
+                                    existe.setValue(true);
+                                } else {
+                                    // El documento no existe
+                                    Log.d(TAG, "Documento no existe.");
+                                    existe.setValue(false);
+                                }
+                            } else {
+                                Log.d(TAG, "Error al obtener documento:", task.getException());
+                            }
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return existe;
+    }
 }

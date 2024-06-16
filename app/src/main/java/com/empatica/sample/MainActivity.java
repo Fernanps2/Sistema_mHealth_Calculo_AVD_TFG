@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -26,6 +27,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import com.empatica.empalink.ConnectionNotAllowedException;
 import com.empatica.empalink.EmpaDeviceManager;
@@ -47,6 +51,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -116,10 +121,6 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
     private int y = 0;
     private int z = 0;
 
-
-    private Button buttonDayRate;
-    private Button buttonActivity;
-
     //Localización
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
     private double longitude;
 
     private boolean deviceConnect = false;
+    private BottomNavigationView navegacion;
 
 
     @Override
@@ -159,6 +161,9 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
 
         deviceNameLabel = (TextView) findViewById(R.id.deviceName);
 
+        navegacion = (BottomNavigationView) findViewById(R.id.navegacion);
+        navegacion.setSelectedItemId(R.id.home);
+
         db = new DataBase();
 
         handler = new Handler();
@@ -166,9 +171,6 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
         //calendar = Calendar.getInstance();
 
         String user = "trainer";
-
-        buttonDayRate = (Button) findViewById(R.id.buttonDayRate);
-        buttonActivity = (Button) findViewById(R.id.buttonActivity);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         latitude = 999.0;
@@ -256,27 +258,31 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
                 }
             }
         });
-
-        //Navegación a la página de media
-        buttonDayRate.setOnClickListener(new View.OnClickListener() {
+        navegacion.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DayRatePage.class);
-                startActivity(intent);
-            }
-        });
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
 
-        //Navegación a la página de las actividades
-        buttonActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ActivityViewer.class);
-                startActivity(intent);
+                if (itemId == R.id.home) {
+                    //Acción para home
+                } else if (itemId == R.id.analitycs) {
+                    Intent intent_an = new Intent(MainActivity.this, DayRatePage.class);
+                    startActivity(intent_an);
+                } else if (itemId == R.id.activities) {
+                    Intent intent_act = new Intent(MainActivity.this, ActivityViewer.class);
+                    startActivity(intent_act);
+                } else if (itemId == R.id.user) {
+                    //Acción para el perfil
+                    Intent intent_act = new Intent(MainActivity.this, ProfilePage.class);
+                    startActivity(intent_act);
+                }
+
+                return false;
             }
         });
 
         //######################################################
-        // FIN FUNCIONES PARA LA LOCALIZACIÓN
+        // FIN FUNCIONES PARA LA BOTONES
         //######################################################
 
         initEmpaticaDeviceManager();
@@ -498,10 +504,18 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
         if (status == EmpaStatus.READY) {
             updateLabel(statusLabel, status.name() + " - Enciende tu dispositivo");
             // Start scanning
-            deviceManager.startScanning();
+            //deviceManager.startScanning();
             // The device manager has established a connection
+            //hide();
 
-            hide();
+            // Check if EmpaLinkBLE is initialized
+            if (deviceManager != null) {
+                deviceManager.startScanning();
+                hide();
+            } else {
+                Log.e(TAG, "EmpaLinkBLE is not initialized. Cannot start scanning.");
+                // Handle the error or show a message to the user
+            }
 
         } else if (status == EmpaStatus.CONNECTED) {
 
@@ -609,13 +623,13 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
 
     void hide() {
 
-        runOnUiThread(new Runnable() {
+        //runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
+            //@Override
+            //public void run() {
 
                 dataCnt.setVisibility(View.INVISIBLE);
-            }
-        });
+            //}
+        //});
     }
 }

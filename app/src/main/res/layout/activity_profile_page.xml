@@ -5,30 +5,30 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivityViewer">
+    tools:context=".ProfilePage">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp"
         app:layout_constraintBottom_toTopOf="@+id/navegacion"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="28dp"
-                android:textSize="20dp"
-                android:text="CALCULAR ACTIVIDADES" />
+                android:gravity="center"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:text="PERFIL"
+                android:textSize="34sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,110 +41,120 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Fecha inicio" />
+                    android:text="USUARIO" />
 
-                <EditText
-                    android:id="@+id/editTextDate"
+                <TextView
+                    android:id="@+id/usuario"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="Seleccionar Fecha"
-                    android:inputType="none" />
+                    android:ems="10"
+                    android:textSize="18dp"
+                    android:inputType="text"
+                    android:text="Name" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="28dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="NOMBRE" />
+
+                <EditText
+                    android:id="@+id/nombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="Name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/textView8"
-                    android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Hora inicio" />
+                    android:gravity="center"
+                    android:text="CUIDADOR" />
 
                 <EditText
-                    android:id="@+id/editTextTime"
+                    android:id="@+id/cuidador"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="Seleccionar Hora"
-                    android:inputType="none" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="28dp"
-                android:orientation="horizontal">
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="Name" />
 
-                <TextView
-                    android:id="@+id/textView9"
-                    android:gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Fecha fin" />
-
-                <EditText
-                    android:id="@+id/editTextDateFinal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="Seleccionar Fecha"
-                    android:inputType="none" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="28dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView10"
-                    android:gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Hora fin" />
-
-                <EditText
-                    android:id="@+id/editTextTimeFinal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="Seleccionar Hora"
-                    android:inputType="none" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/button"
+            <TextView
+                android:id="@+id/textView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="28dp"
-                android:text="CALCULAR" />
+                android:layout_marginTop="18dp"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:text="Localizaciones" />
 
-            <LinearLayout
-                android:id="@+id/keysLayout"
+            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="28dp"
-                android:gravity="center"
-                android:orientation="vertical"></LinearLayout>
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewLocations"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:padding="8dp"
+                    android:clipToPadding="false"
+                    android:clipChildren="false" />
+
+                <Button
+                    android:id="@+id/fabAddLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="16dp"
+                    android:text="Añadir" />
+
+                </LinearLayout>
+
+            </ScrollView>
 
         </LinearLayout>
     </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:contentDescription="Botón para guardar perfil"
+        app:layout_constraintBottom_toTopOf="@+id/navegacion"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navegacion"
@@ -156,5 +166,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

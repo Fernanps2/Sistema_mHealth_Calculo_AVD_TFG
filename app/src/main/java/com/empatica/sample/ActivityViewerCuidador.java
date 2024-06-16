@@ -18,6 +18,7 @@ import android.app.DatePickerDialog;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
 
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -33,12 +34,13 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ActivityViewer extends AppCompatActivity implements HttpRequestTask.OnTaskCompleted {
+public class ActivityViewerCuidador extends AppCompatActivity implements HttpRequestTask.OnTaskCompleted {
 
     private EditText[] fechaEdit = {null, null};
     private EditText[] horaEdit = {null, null};
@@ -51,16 +53,19 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
 
     //private boolean isRequestInProgress = false;
     private HttpRequestTask task;
-    private String usuario = "trainer";
+    private String usuario;
+    private String idCuidador = "trainerCuidador";
     private BottomNavigationView navegacion;
+    private DataBase db;
+    private TextView usuarioView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_viewer);
+        setContentView(R.layout.activity_viewer_cuidador);
 
         navegacion = (BottomNavigationView) findViewById(R.id.navegacion);
-        navegacion.setSelectedItemId(R.id.activities);
+        navegacion.setSelectedItemId(R.id.home);
 
         navegacion.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
@@ -68,25 +73,20 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.home) {
-                    //Acción para home
-                    //Intent intent_an = new Intent(ActivityViewer.this, MainActivity.class);
-                    //startActivity(intent_an);
-                    Toast.makeText(ActivityViewer.this, "NO IMPLEMENTADO: Utilice el botón de retroceso del teléfono", Toast.LENGTH_SHORT).show();
-                } else if (itemId == R.id.analitycs) {
-                    //Acción para analíticas
-                    Intent intent_act = new Intent(ActivityViewer.this, DayRatePage.class);
-                    startActivity(intent_act);
-                } else if (itemId == R.id.activities) {
                     //Acción para las actividades
                 } else if (itemId == R.id.user) {
                     //Acción para el perfil
-                    Intent intent_act = new Intent(ActivityViewer.this, ProfilePage.class);
+                    Intent intent_act = new Intent(ActivityViewerCuidador.this, ProfilePageCuidador.class);
                     startActivity(intent_act);
                 }
 
                 return false;
             }
         });
+
+        db = new DataBase();
+
+        usuarioView = findViewById(R.id.idUsuario);
 
         fechaEdit[0] = (EditText) findViewById(R.id.editTextDate);
         horaEdit[0] = (EditText) findViewById(R.id.editTextTime);
@@ -109,18 +109,62 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
             @Override
             public void onClick(View v) {
                 //Log.d("Actividad", "" + F_ini + " " + H_ini + " " + F_fin + " " + H_fin);
-                if (fecha[0] != null && fecha[1] != null && hora[0] != null && hora[1] != null) {
-                    if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
-                        task.cancel(true);
-                    }
+                if (usuario!=null){
+                    if (fecha[0] != null && fecha[1] != null && hora[0] != null && hora[1] != null) {
+                        if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
+                            task.cancel(true);
+                        }
 
-                    task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], ActivityViewer.this);
-                    task.execute();
+                        //Log.d("ActivityViewerCuidador", "Valor usuario: " + usuario);
+
+                        task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], ActivityViewerCuidador.this);
+                        task.execute();
+                    }
+                    else {
+                        layout.removeAllViews();
+                        Toast.makeText(ActivityViewerCuidador.this, "Por favor ingresa todos los campos", Toast.LENGTH_SHORT).show();
+                        //Log.d("Actividad", "No debe haber valores sin seleccionar");
+                    }
                 }
                 else {
-                    layout.removeAllViews();
-                    Toast.makeText(ActivityViewer.this, "Por favor ingresa todos los campos", Toast.LENGTH_SHORT).show();
-                    //Log.d("Actividad", "No debe haber valores sin seleccionar");
+                    Toast.makeText(ActivityViewerCuidador.this, "No hay aún un usuario asignado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        db.getDataCuidador(idCuidador).observe(ActivityViewerCuidador.this, new Observer<Map<String, Object>>() {
+            @Override
+            public void onChanged(Map<String, Object> stringObjectMap) {
+                usuario = (String)stringObjectMap.get("asignado");
+                if (usuario != null) {
+                    db.getDataUser(usuario).observe(ActivityViewerCuidador.this, new Observer<Map<String, Object>>() {
+                        @Override
+                        public void onChanged(Map<String, Object> stringObjectMap) {
+                            if (!stringObjectMap.isEmpty()) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        usuarioView.setText(usuario);
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        usuarioView.setText("El usuario asignado no existe");
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            usuarioView.setText("No tienes a nadie asignado");
+                        }
+                    });
                 }
             }
         });
@@ -135,7 +179,7 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
             mostrarKeys(response);
         } else {
             layout.removeAllViews();
-            Toast.makeText(ActivityViewer.this, "El servidor no ha devuelto datos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ActivityViewerCuidador.this, "El servidor no ha devuelto datos", Toast.LENGTH_SHORT).show();
             //Log.d("Actividad", "La respuesta del servidor es nula");
         }
     }
@@ -208,7 +252,7 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
                 layout.addView(textView);
             }
 
-            Toast.makeText(ActivityViewer.this, "Actividades calculadas con éxito", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ActivityViewerCuidador.this, "Actividades calculadas con éxito", Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             Log.e("Actividad", "Error al procesar el JSON", e);
         }
