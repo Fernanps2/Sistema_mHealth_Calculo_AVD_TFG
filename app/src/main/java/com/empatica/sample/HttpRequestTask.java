@@ -18,32 +18,40 @@ public class HttpRequestTask extends AsyncTask<Void, Void, String> {
     private String hora_inicio;
     private String fecha_final;
     private String hora_final;
-    private String BASE_URL = "http://13.49.229.149:80/predict";
+    private String actividad;
+    private String BASE_URL = "http://13.49.229.149:80/";
     private OnTaskCompleted listener;
 
-    public HttpRequestTask() {
+    public HttpRequestTask(String tipo) {
+
         super();
+        BASE_URL = BASE_URL+tipo;
     }
 
-    public HttpRequestTask(String usuario, String fecha_inicio, String hora_inicio, String fecha_final, String hora_final, OnTaskCompleted listener) {
+    public HttpRequestTask(String usuario, String fecha_inicio, String hora_inicio, String fecha_final, String hora_final, String actividad, OnTaskCompleted listener, String tipo) {
         this.usuario = usuario;
         this.fecha_inicio = fecha_inicio;
         this.hora_inicio = hora_inicio;
         this.fecha_final = fecha_final;
         this.hora_final = hora_final;
+        this.actividad = actividad;
         this.listener = listener;
+        BASE_URL = BASE_URL+tipo;
     }
 
-    public HttpRequestTask(OnTaskCompleted listener) {
+    public HttpRequestTask(OnTaskCompleted listener, String tipo) {
+
         this.listener = listener;
+        BASE_URL = BASE_URL+tipo;
     }
 
-    public void setEnv(String usuario, String fecha_inicio, String hora_inicio, String fecha_final, String hora_final) {
+    public void setEnv(String usuario, String fecha_inicio, String hora_inicio, String fecha_final, String hora_final, String actividad) {
         this.usuario = usuario;
         this.fecha_inicio = fecha_inicio;
         this.hora_inicio = hora_inicio;
         this.fecha_final = fecha_final;
         this.hora_final = hora_final;
+        this.actividad = actividad;
     }
 
     @Override
@@ -51,7 +59,7 @@ public class HttpRequestTask extends AsyncTask<Void, Void, String> {
         try {
             // Cuerpo del JSON
             String jsonInputString = "{\"usuario\": \"" + usuario + "\", \"fecha_inicio\": \"" + fecha_inicio + "\", \"hora_inicio\":\""+hora_inicio+"\", \"fecha_final\": \""+
-                fecha_final+"\", \"hora_final\": \""+hora_final+"\"}";
+                fecha_final+"\", \"hora_final\": \""+hora_final+"\", \"activity\": \""+actividad+"\"}";
             URL url = new URL(this.BASE_URL);
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

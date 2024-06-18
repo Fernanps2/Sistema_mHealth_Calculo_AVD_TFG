@@ -114,7 +114,7 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
                         task.cancel(true);
                     }
 
-                    task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], ActivityViewer.this);
+                    task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], "", ActivityViewer.this, "predict");
                     task.execute();
                 }
                 else {

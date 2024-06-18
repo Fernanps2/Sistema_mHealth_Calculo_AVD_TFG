@@ -1,5 +1,7 @@
 package com.empatica.sample;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +46,26 @@ public class InitialPage extends AppCompatActivity {
         });
 
         buttonUsuario = (Button) findViewById(R.id.buttonUsuario);
+
+        AlertDialog.Builder alerta = new AlertDialog.Builder(InitialPage.this);
+        alerta.setMessage("Esta aplicación recopila datos fisiológicos y de ubicación, almacenándolos y tratándolos para su posterior uso en el cálculo de actividades. \n¿Está de acuerdo con el uso de sus datos y será responsable con el uso de los datos de otras personas?")
+                .setCancelable(false)
+                        .setPositiveButton("Estoy de acuerdo", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("No estoy de acuerdo", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        });
+        AlertDialog titulo = alerta.create();
+        titulo.setTitle("Permiso de uso de datos");
+        titulo.show();
+
 
         //Navegación a la página principal del usuario
         buttonUsuario.setOnClickListener(new View.OnClickListener() {

@@ -57,7 +57,7 @@ public class ProfilePageCuidador extends AppCompatActivity {
     private BottomNavigationView navegacion;
     private EditText nombre;
     private TextView usuario;
-    private EditText cuidador;
+    private TextView cuidador;
     private Map<String, Object> dataMap;
     private String idUsuario = "trainerCuidador";
 
@@ -78,7 +78,11 @@ public class ProfilePageCuidador extends AppCompatActivity {
                     //Acción para home
                     Intent intent_act = new Intent(ProfilePageCuidador.this, ActivityViewerCuidador.class);
                     startActivity(intent_act);
-                } else if (itemId == R.id.user) {
+                } else if (itemId == R.id.trainer) {
+                    //Acción para el trainer
+                    Intent intent_act = new Intent(ProfilePageCuidador.this, TrainViewer.class);
+                    startActivity(intent_act);
+                }else if (itemId == R.id.user) {
                     //Acción para el perfil
                 }
 
@@ -95,7 +99,6 @@ public class ProfilePageCuidador extends AppCompatActivity {
         cuidador.setText(DEFAULT_TEXT);
 
         nombre.setActivated(false);
-        cuidador.setActivated(false);
 
         nombre.addTextChangedListener(new TextWatcher() {
             @Override
@@ -114,25 +117,6 @@ public class ProfilePageCuidador extends AppCompatActivity {
                 // Este método se llama después de que el texto haya cambiado
             }
         });
-
-        cuidador.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Este método se llama antes de que el texto cambie
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Este método se llama mientras el texto está cambiando
-                dataMap.put("asignado", s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // Este método se llama después de que el texto haya cambiado
-            }
-        });
-
 
         saveButton = findViewById(R.id.saveButton);
         saveButton.setActivated(false);
@@ -178,10 +162,13 @@ public class ProfilePageCuidador extends AppCompatActivity {
         // Actualizar vistas de la interfaz de usuario
         usuario.setText((String) dataMap.get("usuario"));
         nombre.setText((String) dataMap.get("nombre"));
-        cuidador.setText((String) dataMap.get("asignado"));
+
+        if (((String)dataMap.get("asignado")).isEmpty())
+            cuidador.setText("No tiene a nadie asignado");
+        else
+            cuidador.setText((String) dataMap.get("asignado"));
 
         nombre.setActivated(true);
-        cuidador.setActivated(true);
         saveButton.setActivated(true);
     }
 

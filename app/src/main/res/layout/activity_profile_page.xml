@@ -112,7 +112,7 @@
                 android:layout_weight="1"
                 android:text="Localizaciones" />
 
-            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -121,13 +121,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewLocations"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:padding="8dp"
-                    android:clipToPadding="false"
-                    android:clipChildren="false" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewLocations"
+                        android:layout_width="match_parent"
+                        android:layout_height="162dp"
+                        android:background="#DCDBDB"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:padding="8dp"
+                        android:scrollbars="vertical" />
 
                 <Button
                     android:id="@+id/fabAddLocation"

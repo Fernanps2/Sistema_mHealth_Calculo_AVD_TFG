@@ -74,7 +74,11 @@ public class ActivityViewerCuidador extends AppCompatActivity implements HttpReq
 
                 if (itemId == R.id.home) {
                     //Acción para las actividades
-                } else if (itemId == R.id.user) {
+                } else if (itemId == R.id.trainer) {
+                    //Acción para el trainer
+                    Intent intent_act = new Intent(ActivityViewerCuidador.this, TrainViewer.class);
+                    startActivity(intent_act);
+                }else if (itemId == R.id.user) {
                     //Acción para el perfil
                     Intent intent_act = new Intent(ActivityViewerCuidador.this, ProfilePageCuidador.class);
                     startActivity(intent_act);
@@ -109,7 +113,7 @@ public class ActivityViewerCuidador extends AppCompatActivity implements HttpReq
             @Override
             public void onClick(View v) {
                 //Log.d("Actividad", "" + F_ini + " " + H_ini + " " + F_fin + " " + H_fin);
-                if (usuario!=null){
+                if (!usuario.isEmpty()){
                     if (fecha[0] != null && fecha[1] != null && hora[0] != null && hora[1] != null) {
                         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
                             task.cancel(true);
@@ -117,7 +121,7 @@ public class ActivityViewerCuidador extends AppCompatActivity implements HttpReq
 
                         //Log.d("ActivityViewerCuidador", "Valor usuario: " + usuario);
 
-                        task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], ActivityViewerCuidador.this);
+                        task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], "", ActivityViewerCuidador.this, "predict");
                         task.execute();
                     }
                     else {
@@ -136,7 +140,7 @@ public class ActivityViewerCuidador extends AppCompatActivity implements HttpReq
             @Override
             public void onChanged(Map<String, Object> stringObjectMap) {
                 usuario = (String)stringObjectMap.get("asignado");
-                if (usuario != null) {
+                if (!usuario.isEmpty()) {
                     db.getDataUser(usuario).observe(ActivityViewerCuidador.this, new Observer<Map<String, Object>>() {
                         @Override
                         public void onChanged(Map<String, Object> stringObjectMap) {

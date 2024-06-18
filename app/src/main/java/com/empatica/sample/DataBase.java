@@ -2,6 +2,7 @@ package com.empatica.sample;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -866,5 +867,101 @@ public class DataBase {
         }
 
         return existe;
+    }
+
+    public LiveData<Boolean> existeUsuarioCuidadorSinAsignar (String usuario) {
+        MutableLiveData<Boolean> existe = new MutableLiveData<>();
+
+        try {
+            db.collection(CUIDADORES)
+                    .document(usuario)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    existe.setValue(((String)document.getData().get("asignado")).isEmpty());
+                                } else {
+                                    existe.setValue(false);
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+            /*getDataCuidador(usuario).observe((LifecycleOwner) DataBase.this, new Observer<Map<String, Object>>() {
+                @Override
+                public void onChanged(Map<String, Object> stringObjectMap) {
+                    if (stringObjectMap.isEmpty()) {
+                        Log.d(TAG, "Existe cuidador sin asignado");
+                        existe.setValue(!((String)stringObjectMap.get("asignado")).isEmpty());
+                    } else {
+                        Log.d(TAG, "No existe cuidador sin asignado");
+                        existe.setValue(false);
+                    }
+                }
+            });*/
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return existe;
+    }
+
+    public void desasignarCuidador (String cuidador) {
+        try {
+            db.collection(CUIDADORES)
+                    .document(cuidador)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Map<String, Object> map = document.getData();
+                                    map.put("asignado", "");
+                                    setDataCuidador(cuidador, map);
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void asignarCuidador (String cuidador, String usuario) {
+        try {
+            db.collection(CUIDADORES)
+                    .document(cuidador)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Map<String, Object> map = document.getData();
+                                    map.put("asignado", usuario);
+                                    setDataCuidador(cuidador, map);
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

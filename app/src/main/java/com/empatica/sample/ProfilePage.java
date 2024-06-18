@@ -62,6 +62,7 @@ public class ProfilePage extends AppCompatActivity {
     private EditText nombre;
     private TextView usuario;
     private EditText cuidador;
+    private String cuidadorAntiguo;
     private Map<String, Object> dataMap;
 
     @Override
@@ -238,6 +239,7 @@ public class ProfilePage extends AppCompatActivity {
         // Manejar y procesar los datos recibidos
         //dataMap.clear();
         dataMap = data;
+        cuidadorAntiguo = (String) dataMap.get("asignado");
         Log.d("ProfileUser", "Valores de data: " + dataMap);
 
         // Actualizar la interfaz de usuario fuera del hilo principal
@@ -276,26 +278,75 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void guardarDatos() {
-        db.setDataUser((String)dataMap.get("usuario"), dataMap).observe(ProfilePage.this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean completado) {
-                if (completado){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(ProfilePage.this, "Los cambios se han guardado con éxito", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(ProfilePage.this, "Ha habido un problema al guardar", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+        //Comprobamos si se ha cambiado el cuidador
+        if (!dataMap.get("asignado").equals(cuidadorAntiguo)) {
+            //Comprobamos si el cuidador nuevo tiene a alguien ya asignado
+            db.existeUsuarioCuidadorSinAsignar((String)dataMap.get("asignado")).observe(ProfilePage.this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    //Si es un buen candidato como cuidador
+                    if (aBoolean) {
+                        Log.d("ProfilePage", "Existe un cuidador sin asignar");
+                        //Desasignamos el cuidado al antiguo
+                        db.desasignarCuidador(cuidadorAntiguo);
+                        db.asignarCuidador((String)dataMap.get("asignado"), (String)dataMap.get("usuario"));
+                        //Ponemos como nuevo cuidador al actual
+                        cuidadorAntiguo = (String)dataMap.get("asignado");
+                        db.setDataUser((String)dataMap.get("usuario"), dataMap).observe(ProfilePage.this, new Observer<Boolean>() {
+                            @Override
+                            public void onChanged(Boolean completado) {
+                                if (completado){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ProfilePage.this, "Los cambios se han guardado con éxito", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ProfilePage.this, "Ha habido un problema al guardar", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        dataMap.put("asignado", cuidadorAntiguo);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                cuidador.setText((String)dataMap.get("asignado"));
+                                Toast.makeText(ProfilePage.this, "El cuidador seleccionado no es válido", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
+        else {
+            db.setDataUser((String)dataMap.get("usuario"), dataMap).observe(ProfilePage.this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean completado) {
+                    if (completado){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ProfilePage.this, "Los cambios se han guardado con éxito", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ProfilePage.this, "Ha habido un problema al guardar", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
+        }
     }
 
 }
