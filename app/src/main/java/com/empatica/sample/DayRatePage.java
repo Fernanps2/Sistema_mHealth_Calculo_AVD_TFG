@@ -1,9 +1,12 @@
 package com.empatica.sample;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.CalendarView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +19,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +38,7 @@ public class DayRatePage extends AppCompatActivity {
     private int MM;
     private int DD;
     private String usuario;
+    private BottomNavigationView navegacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,34 @@ public class DayRatePage extends AppCompatActivity {
         lineChartMes = findViewById(R.id.lineChartMes);
         calendario = findViewById(R.id.calendario);
         final Map<Integer, Map<String, Object>> dataMap = new HashMap<>();
-        db = new ViewModelProvider(this).get(DataBase.class);
+        db = new DataBase();
+        navegacion = (BottomNavigationView) findViewById(R.id.navegacion);
+        navegacion.setSelectedItemId(R.id.analitycs);
+
+        navegacion.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.home) {
+                    //Acción para home
+                    //Intent intent_an = new Intent(DayRatePage.this, MainActivity.class);
+                    //startActivity(intent_an);
+                    Toast.makeText(DayRatePage.this, "NO IMPLEMENTADO: Utilice el botón de retroceso del teléfono", Toast.LENGTH_SHORT).show();
+                } else if (itemId == R.id.analitycs) {
+                    //Acción para analíticas
+                } else if (itemId == R.id.activities) {
+                    Intent intent_act = new Intent(DayRatePage.this, ActivityViewer.class);
+                    startActivity(intent_act);
+                } else if (itemId == R.id.user) {
+                    //Acción para el perfil
+                    Intent intent_act = new Intent(DayRatePage.this, ProfilePage.class);
+                    startActivity(intent_act);
+                }
+
+                return false;
+            }
+        });
 
         YYYY = 0;
         MM = 0;

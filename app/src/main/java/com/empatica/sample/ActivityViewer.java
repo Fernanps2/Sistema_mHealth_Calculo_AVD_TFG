@@ -6,8 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,6 +22,9 @@ import androidx.core.view.WindowInsetsCompat;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,11 +52,41 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
     //private boolean isRequestInProgress = false;
     private HttpRequestTask task;
     private String usuario = "trainer";
+    private BottomNavigationView navegacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewer);
+
+        navegacion = (BottomNavigationView) findViewById(R.id.navegacion);
+        navegacion.setSelectedItemId(R.id.activities);
+
+        navegacion.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.home) {
+                    //Acción para home
+                    //Intent intent_an = new Intent(ActivityViewer.this, MainActivity.class);
+                    //startActivity(intent_an);
+                    Toast.makeText(ActivityViewer.this, "NO IMPLEMENTADO: Utilice el botón de retroceso del teléfono", Toast.LENGTH_SHORT).show();
+                } else if (itemId == R.id.analitycs) {
+                    //Acción para analíticas
+                    Intent intent_act = new Intent(ActivityViewer.this, DayRatePage.class);
+                    startActivity(intent_act);
+                } else if (itemId == R.id.activities) {
+                    //Acción para las actividades
+                } else if (itemId == R.id.user) {
+                    //Acción para el perfil
+                    Intent intent_act = new Intent(ActivityViewer.this, ProfilePage.class);
+                    startActivity(intent_act);
+                }
+
+                return false;
+            }
+        });
 
         fechaEdit[0] = (EditText) findViewById(R.id.editTextDate);
         horaEdit[0] = (EditText) findViewById(R.id.editTextTime);
@@ -79,15 +114,12 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
                         task.cancel(true);
                     }
 
-                    task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], ActivityViewer.this);
+                    task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], "", ActivityViewer.this, "predict");
                     task.execute();
                 }
                 else {
                     layout.removeAllViews();
-                    TextView textView = new TextView(ActivityViewer.this);
-                    textView.setTextSize(16); // Establece el tamaño del texto
-                    textView.setText("No debe haber valores sin seleccionar");
-                    layout.addView(textView);
+                    Toast.makeText(ActivityViewer.this, "Por favor ingresa todos los campos", Toast.LENGTH_SHORT).show();
                     //Log.d("Actividad", "No debe haber valores sin seleccionar");
                 }
             }
@@ -103,10 +135,7 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
             mostrarKeys(response);
         } else {
             layout.removeAllViews();
-            TextView textView = new TextView(this);
-            textView.setTextSize(16); // Establece el tamaño del texto
-            textView.setText("No hay datos asociados");
-            layout.addView(textView);
+            Toast.makeText(ActivityViewer.this, "El servidor no ha devuelto datos", Toast.LENGTH_SHORT).show();
             //Log.d("Actividad", "La respuesta del servidor es nula");
         }
     }
@@ -167,9 +196,9 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                double value = jsonObject.getDouble(key);
+                int value = jsonObject.getInt(key);
                 TextView textView = new TextView(this);
-                textView.setText(key+": "+String.format("%.2f", value)+"%");
+                textView.setText(key+": "+value+" minutos");
 
                 // Establece las propiedades del TextView
                 textView.setGravity(View.TEXT_ALIGNMENT_CENTER); // Establece la gravedad
@@ -178,6 +207,8 @@ public class ActivityViewer extends AppCompatActivity implements HttpRequestTask
 
                 layout.addView(textView);
             }
+
+            Toast.makeText(ActivityViewer.this, "Actividades calculadas con éxito", Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             Log.e("Actividad", "Error al procesar el JSON", e);
         }

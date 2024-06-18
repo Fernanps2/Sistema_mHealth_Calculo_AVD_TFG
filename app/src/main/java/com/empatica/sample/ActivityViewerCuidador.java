@@ -9,8 +9,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -42,18 +40,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TrainViewer extends AppCompatActivity implements HttpRequestTask.OnTaskCompleted {
+public class ActivityViewerCuidador extends AppCompatActivity implements HttpRequestTask.OnTaskCompleted {
 
     private EditText[] fechaEdit = {null, null};
     private EditText[] horaEdit = {null, null};
-    private EditText actEdit;
     private Calendar calendar;
     private Button boton;
     private LinearLayout layout;
 
     private String[] fecha = {null, null};
     private String[] hora = {null, null};
-    private String actividad;
 
     //private boolean isRequestInProgress = false;
     private HttpRequestTask task;
@@ -66,10 +62,10 @@ public class TrainViewer extends AppCompatActivity implements HttpRequestTask.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_train_viewer);
+        setContentView(R.layout.activity_viewer_cuidador);
 
         navegacion = (BottomNavigationView) findViewById(R.id.navegacion);
-        navegacion.setSelectedItemId(R.id.trainer);
+        navegacion.setSelectedItemId(R.id.home);
 
         navegacion.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
@@ -78,13 +74,13 @@ public class TrainViewer extends AppCompatActivity implements HttpRequestTask.On
 
                 if (itemId == R.id.home) {
                     //Acción para las actividades
-                    Intent intent_act = new Intent(TrainViewer.this, ActivityViewerCuidador.class);
-                    startActivity(intent_act);
                 } else if (itemId == R.id.trainer) {
                     //Acción para el trainer
+                    Intent intent_act = new Intent(ActivityViewerCuidador.this, TrainViewer.class);
+                    startActivity(intent_act);
                 }else if (itemId == R.id.user) {
                     //Acción para el perfil
-                    Intent intent_act = new Intent(TrainViewer.this, ProfilePageCuidador.class);
+                    Intent intent_act = new Intent(ActivityViewerCuidador.this, ProfilePageCuidador.class);
                     startActivity(intent_act);
                 }
 
@@ -100,7 +96,6 @@ public class TrainViewer extends AppCompatActivity implements HttpRequestTask.On
         horaEdit[0] = (EditText) findViewById(R.id.editTextTime);
         fechaEdit[1] = (EditText) findViewById(R.id.editTextDateFinal);
         horaEdit[1] = (EditText) findViewById(R.id.editTextTimeFinal);
-        actEdit = (EditText) findViewById(R.id.editTextActivity);
 
         boton = (Button) findViewById(R.id.button);
         layout = (LinearLayout) findViewById(R.id.keysLayout);
@@ -119,52 +114,34 @@ public class TrainViewer extends AppCompatActivity implements HttpRequestTask.On
             public void onClick(View v) {
                 //Log.d("Actividad", "" + F_ini + " " + H_ini + " " + F_fin + " " + H_fin);
                 if (!usuario.isEmpty()){
-                    if (fecha[0] != null && fecha[1] != null && hora[0] != null && hora[1] != null && !actividad.isEmpty()) {
+                    if (fecha[0] != null && fecha[1] != null && hora[0] != null && hora[1] != null) {
                         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
                             task.cancel(true);
                         }
 
                         //Log.d("ActivityViewerCuidador", "Valor usuario: " + usuario);
 
-                        task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], actividad, TrainViewer.this, "train");
+                        task = new HttpRequestTask(usuario, fecha[0], hora[0], fecha[1], hora[1], "", ActivityViewerCuidador.this, "predict");
                         task.execute();
                     }
                     else {
                         layout.removeAllViews();
-                        Toast.makeText(TrainViewer.this, "Por favor ingresa todos los campos", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityViewerCuidador.this, "Por favor ingresa todos los campos", Toast.LENGTH_SHORT).show();
                         //Log.d("Actividad", "No debe haber valores sin seleccionar");
                     }
                 }
                 else {
-                    Toast.makeText(TrainViewer.this, "No hay aún un usuario asignado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivityViewerCuidador.this, "No hay aún un usuario asignado", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        actEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Este método se llama antes de que el texto cambie
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Este método se llama mientras el texto está cambiando
-                actividad = s.toString();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // Este método se llama después de que el texto haya cambiado
-            }
-        });
-
-        db.getDataCuidador(idCuidador).observe(TrainViewer.this, new Observer<Map<String, Object>>() {
+        db.getDataCuidador(idCuidador).observe(ActivityViewerCuidador.this, new Observer<Map<String, Object>>() {
             @Override
             public void onChanged(Map<String, Object> stringObjectMap) {
                 usuario = (String)stringObjectMap.get("asignado");
                 if (!usuario.isEmpty()) {
-                    db.getDataUser(usuario).observe(TrainViewer.this, new Observer<Map<String, Object>>() {
+                    db.getDataUser(usuario).observe(ActivityViewerCuidador.this, new Observer<Map<String, Object>>() {
                         @Override
                         public void onChanged(Map<String, Object> stringObjectMap) {
                             if (!stringObjectMap.isEmpty()) {
@@ -203,16 +180,10 @@ public class TrainViewer extends AppCompatActivity implements HttpRequestTask.On
         if (response != null) {
             // Procesa la respuesta del servidor aquí
             //Log.d("Actividad", "Respuesta del servidor: " + response);
-            //mostrarKeys(response);
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                Toast.makeText(TrainViewer.this, jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-            } catch (JSONException e) {
-                Log.e("Actividad", "Error al procesar el JSON", e);
-            }
+            mostrarKeys(response);
         } else {
-            //layout.removeAllViews();
-            Toast.makeText(TrainViewer.this, "El servidor no ha encontrado datos asociados", Toast.LENGTH_SHORT).show();
+            layout.removeAllViews();
+            Toast.makeText(ActivityViewerCuidador.this, "El servidor no ha devuelto datos", Toast.LENGTH_SHORT).show();
             //Log.d("Actividad", "La respuesta del servidor es nula");
         }
     }
@@ -263,24 +234,31 @@ public class TrainViewer extends AppCompatActivity implements HttpRequestTask.On
     }
 
     //Método para mostrar las actividades devueltas por el server
-    /*private void mostrarKeys(String response) {
+    private void mostrarKeys(String response) {
         try {
             JSONObject jsonObject = new JSONObject(response);
             Iterator<String> keys = jsonObject.keys();
 
             // Limpia el LinearLayout antes de agregar nuevos TextView
-            //layout.removeAllViews();
+            layout.removeAllViews();
 
             while (keys.hasNext()) {
                 String key = keys.next();
                 int value = jsonObject.getInt(key);
-                if (key.equals("error")) {
-                    Toast.makeText(TrainViewer.this, "Error: ha habido un error al entrenar la actividad", Toast.LENGTH_SHORT).show();
-                } else
-                    Toast.makeText(TrainViewer.this, "Actividad entrenada con éxito", Toast.LENGTH_SHORT).show();
+                TextView textView = new TextView(this);
+                textView.setText(key+": "+value+" minutos");
+
+                // Establece las propiedades del TextView
+                textView.setGravity(View.TEXT_ALIGNMENT_CENTER); // Establece la gravedad
+                textView.setPadding(16, 16, 16, 16); // Establece el padding
+                textView.setTextSize(16); // Establece el tamaño del texto
+
+                layout.addView(textView);
             }
+
+            Toast.makeText(ActivityViewerCuidador.this, "Actividades calculadas con éxito", Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             Log.e("Actividad", "Error al procesar el JSON", e);
         }
-    }*/
+    }
 }
