@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
     private double latitude;
     private double longitude;
 
-    private boolean deviceConnect = false;
+    private boolean deviceConnect;
     private BottomNavigationView navegacion;
 
 
@@ -148,6 +148,8 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
         accel_yLabel = (TextView) findViewById(R.id.accel_y);
 
         accel_zLabel = (TextView) findViewById(R.id.accel_z);
+
+        deviceConnect = false;
 
         //bvpLabel = (TextView) findViewById(R.id.bvp);
 
@@ -216,10 +218,10 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
                 dataMap.put(TMP, tmp);
 
                 //if(latitude != 999.0 && longitude != 999.0) {
-                    ubi.put("latitude", latitude);
-                    ubi.put("longitude", longitude);
+                ubi.put("latitude", latitude);
+                ubi.put("longitude", longitude);
 
-                    dataMap.put(UBI, ubi);
+                dataMap.put(UBI, ubi);
                 //}
 
                 accelerate.put("x", x);
@@ -231,14 +233,13 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
                 //Comprobamos si la ruta existe
 
                 if (deviceConnect) {
-                    db.addDataFisio(user , dataMap);
+                    db.addDataFisio(user, dataMap);
                 }
             }
         };
 
         //Inicia la actividad dentro de un minuto
         handler.postDelayed(runnable, 60 * 1000);
-
 
 
         final Button disconnectButton = findViewById(R.id.disconnectButton);
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
             public void onClick(View v) {
 
                 if (deviceManager != null) {
-                    deviceConnect=false;
+                    deviceConnect = false;
                     deviceManager.disconnect();
                 }
             }
@@ -285,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
         // FIN FUNCIONES PARA LA BOTONES
         //######################################################
 
+        hide();
         initEmpaticaDeviceManager();
     }
 
@@ -390,10 +392,10 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
         }
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -439,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
 
     @Override
     public void didFailedScanning(int errorCode) {
-        
+
         /*
          A system error occurred while scanning.
          @see https://developer.android.com/reference/android/bluetooth/le/ScanCallback
@@ -504,22 +506,16 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
         if (status == EmpaStatus.READY) {
             updateLabel(statusLabel, status.name() + " - Enciende tu dispositivo");
             // Start scanning
-            //deviceManager.startScanning();
+            deviceManager.startScanning();
             // The device manager has established a connection
-            //hide();
 
-            // Check if EmpaLinkBLE is initialized
-            if (deviceManager != null) {
-                deviceManager.startScanning();
-                hide();
-            } else {
-                Log.e(TAG, "EmpaLinkBLE is not initialized. Cannot start scanning.");
-                // Handle the error or show a message to the user
-            }
+            hide();
 
         } else if (status == EmpaStatus.CONNECTED) {
 
+            deviceConnect = true;
             show();
+
             // The device manager disconnected from a device
         } else if (status == EmpaStatus.DISCONNECTED) {
 
@@ -558,7 +554,7 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
 
     @Override
     public void didReceiveIBI(float ibi, double timestamp) {
-        this.hr = 60/ibi;
+        this.hr = 60f/ibi;
         updateLabel(hrLabel, "" + String.format("%.2f", this.hr) + " bpm");
     }
 
@@ -623,13 +619,13 @@ public class MainActivity extends AppCompatActivity implements EmpaDataDelegate,
 
     void hide() {
 
-        //runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
 
-            //@Override
-            //public void run() {
+            @Override
+            public void run() {
 
                 dataCnt.setVisibility(View.INVISIBLE);
-            //}
-        //});
+            }
+        });
     }
 }
