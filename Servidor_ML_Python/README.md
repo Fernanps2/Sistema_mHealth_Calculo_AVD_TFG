@@ -38,3 +38,7 @@ Y ya sólo nos quedaría ejecutarlo
 ## Nota importante
 
 Cada vez que se acceda a la ruta "/predict" dando los datos pertinentes, se generará un documento, si no existía antes, llamado **summary.log**. Dentro de este documento encontraremos el resultado de los algoritmos de aprendizaje automático y su precisión al predecir.
+
+## Referencias
+
+- Biblioteca para los algoritmos de Machine Learning: [scikit-learn](https://scikit-learn.org/stable/install.html)
