@@ -38,6 +38,62 @@ Al subir el código al repositorio parece ser que estos últimos archivos mencio
 
 ---
 
+## Manual de usuario
+
+### Página inicial
+
+<p align="center">
+<img src="imagesReadme/paginaInicio.png" alt="Página Inicio" style="width: 400px;">
+</p>
+
+## Página principal del usuario
+
+<p align="center">
+<img src="imagesReadme/paginaPrincipalUsuarioReady.png" alt="Página Principal Ready" style="width: 600px;">
+</p>
+
+<p align="center">
+<img src="imagesReadme/paginaPrincipalUsuario.png" alt="Página Principal Conectada" style="width: 600px;">
+</p>
+
+<p align="center">
+<img src="imagesReadme/paginaPrincipalUsuarioDisconnect.png" alt="Página Principal Desconectada" style="width: 500px;">
+</p>
+
+## Página detección de actividades del usuario
+
+<p align="center">
+<img src="imagesReadme/PaginaDetectarActividad.png" alt="Página Detección Actividades" style="width: 600px;">
+</p>
+
+## Página de análisis del usuario
+
+<p align="center">
+<img src="imagesReadme/PaginaAnaliticaSeleccionaFecha.png" alt="Página Análisis Escoger" style="width: 500px;">
+</p>
+
+<p align="center">
+<img src="imagesReadme/PaginaAnaliticasVisualizaMedia.png" alt="Página Análisis Visualizar" style="width: 500px;">
+</p>
+
+## Página perfil del usuario
+
+<p align="center">
+<img src="imagesReadme/PáginaPerfil.png" alt="Página Perfil" style="width: 600px;">
+</p>
+
+<p align="center">
+<img src="imagesReadme/PaginaPerfilVentanaEmergente.png" alt="Página Perfil Ventana Ubicación" style="width: 500px;">
+</p>
+
+## Página de entrenamiento del algoritmo (cuidador)
+
+<p align="center">
+<img src="imagesReadme/PaginaTrainer.png" alt="Página Entrenador" style="width: 600px;">
+</p>
+
+---
+
  ## Referencias
  - Código del que se parte: [Ejemplo app empatica oficial](https://github.com/empatica/e4link-sample-project-android)
  - Biblioteca para las gráficas usadas: [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
