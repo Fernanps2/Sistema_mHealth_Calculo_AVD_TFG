@@ -16,24 +16,24 @@ Para poder ejecutar los programas se necesitarán seguir los diferentes pasos.
 
 Actualizar e instalar los diferentes paquetes para usar scikit-learn.
 
-  sudo apt update
-  sudo apt install python3-sklearn python3-sklearn-lib
-  sudo apt install python3.12-venv
+    sudo apt update
+    sudo apt install python3-sklearn python3-sklearn-lib
+    sudo apt install python3.12-venv
 
 Crear el entorno para ejecutar Python3
 
-  python3 -m venv sklearn-env
-  source sklearn-env/bin/activate
+    python3 -m venv sklearn-env
+    source sklearn-env/bin/activate
 
 Instalar todos los paquetes necesarios
 
-  pip3 install -U sctik-learn
-  pip3 install firebase-admin
-  pip3 install flask
+    pip3 install -U sctik-learn
+    pip3 install firebase-admin
+    pip3 install flask
 
 Y ya sólo nos quedaría ejecutarlo
 
-  sudo sklearn-env/bin/python3 run.py
+    sudo sklearn-env/bin/python3 run.py
 
 ## Nota importante
 
