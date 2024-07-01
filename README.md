@@ -5,11 +5,8 @@
 
 ### Partes del repositorio
  - **MoldelFit App**: Código de la aplicación móvil, es la interacción principal del usuario, escrita en Java usando el entorno de desarrollo de aplicaciones móviles Android Studio.
-<<<<<<< HEAD
  - **Servidor ML**: Código del entorno Machine Learning, usada para el cálculo de las actividades del usuario, escrita en Python.
-=======
  - **MachineLearning Server**: Código del entorno Machine Learning, usada para el cálculo de las actividades del usuario, escrita en Python.
->>>>>>> parent of 24c9b22 (Update README.md)
 
 ### Referencias de código/bibliotecas externas usadas
  - **ModelFit App**:
