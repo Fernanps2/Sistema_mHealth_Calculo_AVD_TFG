@@ -2,6 +2,10 @@
 
 Servidor que ejecuta algoritmos de aprendizaje automático desarrollados en Python para poder detectar actividades de la vida diaria.
 
+---
+
+## Estructura
+
 Se divide en diferentes archivos:
 - **run.py** es el programa principal el cual abrirá dos accesos "/predict" donde, a través de los datos que le lleguen enviará una respuesta con las actividades detectadas vinculadas a esos datos, y "/train" que servirá para entrenar al algoritmo a través de etiquetado de actividades.
 - **datos_multiclase.csv** matriz de datos que sirven tanto para inicializar como para entrenar al algoritmo de aprendizaje automático.
@@ -35,9 +39,13 @@ Y ya sólo nos quedaría ejecutarlo
 
     sudo sklearn-env/bin/python3 run.py
 
+---    
+
 ## Nota importante
 
 Cada vez que se acceda a la ruta "/predict" dando los datos pertinentes, se generará un documento, si no existía antes, llamado **summary.log**. Dentro de este documento encontraremos el resultado de los algoritmos de aprendizaje automático y su precisión al predecir.
+
+---
 
 ## Referencias
 
