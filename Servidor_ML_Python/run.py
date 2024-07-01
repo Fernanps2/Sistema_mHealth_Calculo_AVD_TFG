@@ -4,6 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, StackingClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
 import numpy as np
 from collections import Counter
 import pytz
@@ -206,6 +207,16 @@ def calculaUbicaciones(usuario, ubicaciones):
 
     return conteoUbicaciones
 
+# Función para almacenar la precisión de cada detección en un archivo
+
+def save_summary_to_log(activity_summary, accuracy):
+    filename = "summary.log"
+    with open(filename, 'a') as f:
+        f.write(f"Accuracy: {accuracy:.2f}%\n")
+        for activity, count in activity_summary.items():
+            f.write(f"Activity: {activity}, Count: {count}\n")
+        f.write("\n")
+
 ###################################################################################
 # FIN FUNCIONES
 ###################################################################################
@@ -256,6 +267,24 @@ def predict():
         # Realizar predicciones con el modelo de stacking
         predictions = stacking_model.predict(features)
 
+        # Cargar datos de entrenamiento desde el archivo CSV
+        training_data = pd.read_csv('datos_multiclase.csv')
+        X_train = training_data[['HR', 'AccX', 'AccY', 'AccZ', 'Temperature', 'Lat', 'Lon', 'diffLat', 'diffLon']]
+        y_train = training_data['Activity']
+
+        # Calcular la precisión del modelo en los datos de entrenamiento
+        train_predictions = stacking_model.predict(X_train)
+        accuracy = accuracy_score(y_train, train_predictions) * 100
+
+        # Guardar la precisión en un archivo
+        with open('accuracy.txt', 'w') as f:
+            f.write(f'Accuracy: {accuracy:.2f}%\n')
+
+        # Guardar el resumen en el archivo summary.log
+        activity_counts = Counter(predictions)
+        activity_summary = dict(activity_counts)
+        save_summary_to_log(activity_summary, accuracy)
+
         # Contar la frecuencia de cada actividad predicha
         activity_counts = Counter(predictions)
 
@@ -268,27 +297,7 @@ def predict():
 
         activity_summary.update(ubicaciones)
 
-        # Define el formato de la cadena de fecha y hora
-        #formato = "%d/%m/%Y %H:%M:%S"
 
-        # Convierte las cadenas en objetos datetime
-        #fecha_hora_inicio = datetime.strptime(fecha_inicio+" "+hora_inicio, formato)
-        #fecha_hora_final = datetime.strptime(fecha_final+" "+hora_final, formato)
-
-        # Calcula la diferencia entre las dos fechas y horas
-        #diferencia = fecha_hora_final - fecha_hora_inicio
-
-        # Convierte la diferencia en minutos
-        #diferencia_minutos = diferencia.total_seconds() / 60.0
-
-        #print(diferencia_minutos)
-
-        #if diferencia_minutos == 0:
-        #    return jsonify({"error": "La diferencia de tiempo no puede ser cero."}), 400
-
-        # Calculamos los porcentajes de cada actividad
-        #for activity in activity_summary:
-        #    activity_summary[activity] = activity_summary[activity] / diferencia_minutos * 100
 
         return jsonify(activity_summary)
     except Exception as e:
@@ -325,15 +334,6 @@ def train():
             writer.writerows(datos)
 
         print(f"Nuevos datos añadidos al archivo {filename} exitosamente.")
-
-        #df = pd.DataFrame(datos)
-        
-        # Separar características y etiquetas
-        #X_new = df[['HR', 'AccX', 'AccY', 'AccZ', 'Temperature', 'diffLat', 'diffLon']]
-        #y_new = df['Activity']
-        
-        # Entrenar el modelo de manera incremental
-        #stacking_model.fit(X_new, y_new)
         
         data = load_training_data()
         X = data[['HR', 'AccX', 'AccY', 'AccZ', 'Temperature', 'Lat', 'Lon', 'diffLat', 'diffLon']]
