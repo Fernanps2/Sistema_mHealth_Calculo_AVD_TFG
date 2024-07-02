@@ -32,9 +32,7 @@ Puede ser que al abrir y buildearlo salte un error de dependencia y que necesita
          #Deberemos haber almacenado los archivos de la descarga en app/.gradle
          ./.gradle/gradle-8.4/bin/gradle wrapper --gradle-version 8.4
          
-Además, necesitaremos descargar la [API de Empatica E4](https://developer.empatica.com) (E4link-1.0.0.aar) y añadirla a una carpeta que deberemos crear en la ubicación app/libs. 
-
-Al subir el código al repositorio parece ser que estos últimos archivos mencionados no se pueden llegar a subir. 
+Además, si no existe, necesitaremos descargar la [API de Empatica E4](https://developer.empatica.com) (E4link-1.0.0.aar) y añadirla a una carpeta que deberemos crear en la ubicación app/libs. 
 
 ---
 
